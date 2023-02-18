@@ -1,6 +1,9 @@
 """
 Файл с парсингом данных с Binance
 """
+from pasrsers.api_keys import BINANCE_SECRET, BINANCE_PUBLIC
+from pprint import pprint
+
 import fake_useragent
 import requests
 
@@ -30,7 +33,8 @@ def get_data_for_request_binance_p2p(action, fiat, asset, bank):
     return cookies, headers, json_data
 
 
-def parse_binance_p2p(action, fiat, asset, bank):
+def parse_binance_p2p(action, asset, bank):
+    fiat = 'RUB'
     data_for_request = get_data_for_request_binance_p2p(action, fiat, asset, bank)
     cookies = data_for_request[0]
     headers = data_for_request[1]
@@ -56,20 +60,31 @@ def parse_binance_p2p(action, fiat, asset, bank):
         )
 
     return parsed_data
-from pasrsers.api_keys import BINANCE_SECRET, BINANCE_PUBLIC
-from pprint import pprint
 
 
-def split_symbol(symbol):
-    for i in range(len(symbol)):
-        s1 = symbol[0:2 + i]
-        s2 = symbol[2 + i::]
-        if s1 in all_coins_names_set and s2 in all_coins_names_set:
-            return s1, s2
-    return None, None
+def pasrse_all_p2p():
+    acns = ['BUY', 'SELL']
+    assets = ['USDT', 'BTC', 'ETH']
+    banks = ['TinkoffNew', 'RaiffeisenBank']
+    p2p_prices = []
+    for b in banks:
+        for ass in assets:
+            rb = parse_binance_p2p('BUY', ass, b)
+            rs = parse_binance_p2p('SELL', ass, b)
+            p2p_prices.append({'price': rb[0]['price'], 'asset': ass, 'bank': b, 'action': 'BUY'})
+            p2p_prices.append({'price': rs[0]['price'], 'asset': ass, 'bank': b, 'action': 'SELL'})
+    return p2p_prices
 
 
 def get_spot_data():
+    def split_symbol(symbol):
+        for i in range(len(symbol)):
+            s1 = symbol[0:2 + i]
+            s2 = symbol[2 + i::]
+            if s1 in all_coins_names_set and s2 in all_coins_names_set:
+                return s1, s2
+        return None, None
+
     spot_data = {}
     all_coins_names_set = set(map(lambda x: x['coin'], client.get_all_coins_info()))  # вынести в инициализацию
     symbols = list(map(lambda x: x['symbol'], client.get_all_tickers()))
@@ -93,13 +108,12 @@ def get_binance_data():
     :return:
     """
 
-    return None, None
+    return get_spot_data(), pasrse_all_p2p()
 
 
 if __name__ == '__main__':
     from binance.client import Client
 
     client = Client(BINANCE_PUBLIC, BINANCE_SECRET)
-    all_coins_names_set = set(map(lambda x: x['coin'], client.get_all_coins_info()))
-    sd = get_spot_data()
+    sd = get_binance_data()
     pprint(sd)
