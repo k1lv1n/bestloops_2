@@ -3,9 +3,9 @@
 архитектуру будем бить на недо-сервисы.
 """
 
-from pasrsers.bestchange_parser import *
-from pasrsers.binance_parser import *
-from pasrsers.garantex_parser import *
+from bestloops_2.pasrsers.bestchange_parser import *
+from bestloops_2.pasrsers.binance_parser import *
+from bestloops_2.pasrsers.garantex_parser import *
 
 
 def find_paths(bestchange_data_banks,
@@ -26,36 +26,38 @@ def find_paths(bestchange_data_banks,
     routes_banks = []
     for bch_pair in bestchange_data_banks:
         coin = bch_pair['coin']
-        amount_0 = 1_000_000 / bch_pair['rate']
-        for bcoin in binance_coins:
-            if bcoin not in ['NGN']:
-                try:
-                    amount_1 = amount_0 * binance_spot_data[(coin, bcoin)]['price']
-                except KeyError:
-                    continue
-                for ccoin in coins_to_p2p:
-                    try:
-                        amount_2 = amount_1 * binance_spot_data[(bcoin, ccoin)]['price']
-                    except KeyError:
-                        continue
-                    for bank in ['TinkoffNew', 'RaiffeisenBank', 'RosBankNew']:
-                        amount_3 = amount_2 * float(binance_p2p_data[(bank, ccoin, 'BUY')]['price'])
-                        if amount_3 > 1_000_000 * (1 + 0.1 / 100):
-                            routes_banks.append((bch_pair['bank'], coin, bcoin, ccoin, bank, amount_3,
-                                                 bch_pair['rate'],
-                                                 binance_spot_data[(coin, bcoin)]['price'],
-                                                 binance_spot_data[(bcoin, ccoin)]['price'],
-                                                 float(binance_p2p_data[(bank, ccoin, 'BUY')]['price'])))
+        amount_0 = 100_000 / bch_pair['rate']
+        for bcoin in coins_to_p2p:
+            try:
+                amount_1 = amount_0 * binance_spot_data[(coin, bcoin)]['price']
+            except KeyError:
+                continue
+            for bank in ['TinkoffNew', 'RaiffeisenBank', 'RosBankNew']:
+                amount_2 = amount_1 * float(binance_p2p_data[(bank, bcoin, 'BUY')]['price'])
+                if amount_2 > 100_000:  # TODO поменять на >
+                    routes_banks.append({
+                        'exch_name': bch_pair['exchangers'],
+                        'bank_init': bch_pair['bank'],
+                        'bch_coin': coin,
+                        'binance_coin': bcoin,
+                        'end_bank': bank,
+                        'middle_amount': amount_1,
+                        'final_amount': amount_2,
+                        'init_amount': amount_0,
+                        'bch_rate': bch_pair['rate'],
+                        'binance_rate_spot': binance_spot_data[(coin, bcoin)]['price'],
+                        'binance_rate_p2p': float(binance_p2p_data[(bank, bcoin, 'BUY')]['price'])
+                    })
     routes_usdt = []
     for bch_pair in bestchange_data_usdt:
         coin = bch_pair['coin']
-        amount_0 = 1_000_000 / bch_pair['rate']
+        amount_0 = 100_000 / bch_pair['rate']
         for bcoin in binance_coins:
             if bcoin not in ['NGN']:
                 try:
                     amount_1 = amount_0 * binance_spot_data[(coin, bcoin)]['price']
                     amount_2 = amount_1 * binance_spot_data[(bcoin, 'USDT')]['price']
-                    if amount_2 > 1_000_000:
+                    if amount_2 > 100_000:
                         routes_usdt.append(('usdt', coin, bcoin, 'usdt', amount_2))
                 except KeyError:
                     continue

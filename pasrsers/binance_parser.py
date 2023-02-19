@@ -1,13 +1,15 @@
 """
 Файл с парсингом данных с Binance
 """
-from pasrsers.api_keys import BINANCE_SECRET, BINANCE_PUBLIC
+
 from pprint import pprint
 
 import fake_useragent
 import requests
 
 from binance.client import Client
+
+from bestloops_2.pasrsers.api_keys import BINANCE_SECRET, BINANCE_PUBLIC
 
 
 def get_binance_data():
@@ -89,6 +91,7 @@ def get_binance_data():
             return None, None
 
         spot_data = {}
+        client = Client(BINANCE_PUBLIC, BINANCE_SECRET)
         all_coins_names_set = set(map(lambda x: x['coin'], client.get_all_coins_info()))  # вынести в инициализацию
         # symbols = list(map(lambda x: x['symbol'], client.get_all_tickers()))
         orderbooks = client.get_orderbook_tickers()
@@ -102,10 +105,9 @@ def get_binance_data():
                 spot_data[(token_b, token_a)] = {"from_token": token_a,
                                                  "to_token": token_b,
                                                  "price": 1 / float(ob['askPrice'])}
+        client.close_connection()
         return spot_data, all_coins_names_set
 
-    client = Client(BINANCE_PUBLIC, BINANCE_SECRET)
-    client.close_connection()
     return get_spot_data(), pasrse_all_p2p(),
 
 

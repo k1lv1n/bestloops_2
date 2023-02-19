@@ -78,6 +78,7 @@ def get_bestchange_data():
 
     api = BestChange()
     currencies = api.currencies().get()
+    exchangers = api.exchangers().get()
     bch_prices_banks = []
 
     # pprint(currencies)
@@ -86,18 +87,23 @@ def get_bestchange_data():
         for cr_id in CRYPTO_IDS:
             res = api.rates().filter(bank_id, cr_id)
             bch_prices_banks.append(
-                {'bank': banks[bank_id], 'coin': decode_BCH_ticker(currencies[cr_id]['name']), 'rate': res[0]['rate']})
+                {'bank': banks[bank_id], 'coin': decode_BCH_ticker(currencies[cr_id]['name']), 'rate': res[0]['rate'],
+                 'exchangers': exchangers[res[0]['exchange_id']]['name']
+                 })
         res = api.rates().filter(bank_id, bitcoin_bep20_id)
-        bch_prices_banks.append({'bank': banks[bank_id], 'coin': 'BTC', 'rate': res[0]['rate']})
+        bch_prices_banks.append({'bank': banks[bank_id], 'coin': 'BTC', 'rate': res[0]['rate'],
+                                 'exchangers': exchangers[res[0]['exchange_id']]['name']})
     bch_prices_usdt = []
     for bank_id in [usdt]:
         CRYPTO_IDS.pop(10)
         for cr_id in CRYPTO_IDS:
             res = api.rates().filter(bank_id, cr_id)
             bch_prices_usdt.append(
-                {'bank': 'usdt', 'coin': decode_BCH_ticker(currencies[cr_id]['name']), 'rate': res[0]['rate']})
+                {'bank': 'usdt', 'coin': decode_BCH_ticker(currencies[cr_id]['name']), 'rate': res[0]['rate'],
+                 'exchangers': exchangers[res[0]['exchange_id']]['name']})
         res = api.rates().filter(bank_id, bitcoin_bep20_id)
-        bch_prices_usdt.append({'bank': 'usdt', 'coin': 'BTC', 'rate': res[0]['rate']})
+        bch_prices_usdt.append({'bank': 'usdt', 'coin': 'BTC', 'rate': res[0]['rate'],
+                                'exchangers': exchangers[res[0]['exchange_id']]['name']})
 
     return bch_prices_banks, bch_prices_usdt
 
