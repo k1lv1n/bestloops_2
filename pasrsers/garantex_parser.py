@@ -13,12 +13,12 @@ def get_garantex_data():
     :return:
     """
     markets = list(map(lambda x: x['id'], requests.get('https://garantex.io/api/v2/markets').json()))
-    garantex_data = []
+    garantex_data = {}
     for m in markets:
         r = requests.get('https://garantex.io/api/v2/depth', params={'market': m})
-        garantex_data.append({'market': m,
-                              'asks_price': r.json()['asks'][0]['price'],
-                              'bids_price': r.json()['bids'][0]['price']})
+        garantex_data[m] = {'market': m,
+                            'asks_price': r.json()['asks'][0]['price'],
+                            'bids_price': r.json()['bids'][0]['price']}
 
     return garantex_data
 
