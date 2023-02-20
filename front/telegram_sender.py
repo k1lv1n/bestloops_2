@@ -11,8 +11,7 @@ from configs import BOT_TOKEN, TEST_CHANNEL_ID, SBER_LESS_THAN_ONE_CHANNEL_ID, T
     VIP_CHANNEL_ID, NO_BANK_CHANNEL_ID, BINANCE_GARANTEX_CHANNEL_ID
 import asyncio
 from bestloops_2.price_analyzer import find_paths
-import datetime
-import pprint
+import time
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
@@ -77,7 +76,10 @@ def form_text_bingar(routes):
     max_messages_bin_gar = 5
     max_messages_gar_bin = 5
     messages = []
-    sorted_routs = sorted(routes, key=lambda x: x['garantex_price'] / x['binance_p2p_price'] if x['path'] == 0 else x['binance_p2p_price'] / x['garantex_price'],
+    sorted_routs = sorted(routes, key=lambda x: x['garantex_price'] / x['binance_p2p_price'] if x['path'] == 0 else x[
+                                                                                                                        'binance_p2p_price'] /
+                                                                                                                    x[
+                                                                                                                        'garantex_price'],
                           reverse=True)
     for r in sorted_routs:
         if r['path'] == 0 and max_messages_bin_gar != 0:  # Binance -> Grantex
@@ -205,23 +207,40 @@ def form_text_vip(routes):
 
 async def start_sending():
     while True:
+        start = time.time()
         bestchange_data_banks, bestchange_data_usdt = get_bestchange_data()
+        end = time.time() - start
+        print('Bestchange download time: ', end)
+
+        start = time.time()
         (binance_spot_data, binance_coins), binance_p2p_data = get_binance_data()
+        end = time.time() - start
+        print('Binance download time: ', end)
+
+        start = time.time()
         garantex_data = get_garantex_data()
+        end = time.time() - start
+        print('Garantex download time: ', end)
+
+        start = time.time()
         routes_banks, routes_usdt, routes_bingar = find_paths(bestchange_data_banks, bestchange_data_usdt,
                                                               binance_spot_data,
                                                               binance_p2p_data, binance_coins, garantex_data)
-        # print(datetime.datetime.now())
-        # pprint.pprint(routes_banks)
-        # pprint.pprint(routes_usdt)
-        # pprint.pprint(routes_bingar)
+        end = time.time() - start
+        print('Filter time: ', end)
+
         coros = [send_to_vip(form_text_vip(routes_banks)),
                  send_to_sber_less_then_one(form_text_sber_less_then_one(routes_banks)),
                  send_to_tink_less_then_one(from_text_tink_less_then_one(routes_banks)),
                  send_to_no_bank(form_text_usdt(routes_usdt)),
                  send_to_binance_garantex(form_text_bingar(routes_bingar))]
+
+        start = time.time()
         await asyncio.gather(*coros)
+        end = time.time() - start
+        print('Send time: ', end)
         await asyncio.sleep(60)
+        print('___________________')
 
 
 if __name__ == '__main__':
