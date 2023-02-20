@@ -19,7 +19,8 @@ def get_garantex_data():
         r = requests.get('https://garantex.io/api/v2/depth', params={'market': m})
         garantex_data[m] = {'market': m,
                             'asks_price': r.json()['asks'][0]['price'],
-                            'bids_price': r.json()['bids'][0]['price']}
+                            'bids_price': r.json()['bids'][0]['price'],
+                            'href': f'https://garantex.io/trading/{m}'}
 
     return garantex_data
 

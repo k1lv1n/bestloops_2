@@ -106,24 +106,22 @@ def form_text_bingar(routes):
     for r in sorted_routs:
         if r['path'] == 0 and max_messages_bin_gar != 0:  # Binance -> Grantex
             profit = round(100 * (r['garantex_price'] / r['binance_p2p_price'] - 1), 2)
-            url = 'www.google.com'
             text = r['bank'] + ' -> ' + r['coin'] + ' -> ' + 'Garantex' \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' \
                    + f'‣Покупаем на [binance p2p]({r["binance_p2p_href"]}): ' + f'за 100 000 рублей {r["coin"]}' + '\n' + f'*по курсу {r["binance_p2p_price"]}*\n' \
                    + 'Получаем на binance: ' + f'{round(100_000 / r["binance_p2p_price"], 2)}' + f' {r["coin"]}\n' + '\n' \
-                   + '‣Продаем на Garantex ' + f'{r["coin"]}' + ' *по курсу' + f' {round(r["garantex_price"], 5)}*' \
+                   + f'‣Продаем на [Garantex]({r["garantex_href"]}) ' + f'{r["coin"]}' + ' *по курсу' + f' {round(r["garantex_price"], 5)}*' \
                    + f'\nполучаем {round(100_000 / r["binance_p2p_price"] * r["garantex_price"], 2)} рублей'
             messages.append(text)
             max_messages_bin_gar -= 1
 
         elif r['path'] == 1 and max_messages_gar_bin != 0:  # Garantex -> Binance
             profit = round(100 * (r['binance_p2p_price'] / r['garantex_price'] - 1), 2)
-            url = 'www.google.com'
             text = 'Garantex RUB' + ' -> ' + r['coin'] + ' -> ' + r['bank'] \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' \
-                   + f'‣Покупаем на [garantex spot]({url}): ' + f'за 100 000 рублей {r["coin"]}' + '\n' + f'*по курсу {r["garantex_price"]}*\n' \
+                   + f'‣Покупаем на [garantex spot]({r["garantex_href"]}): ' + f'за 100 000 рублей {r["coin"]}' + '\n' + f'*по курсу {r["garantex_price"]}*\n' \
                    + 'Получаем на Garantex: ' + f'{round(100_000 / r["garantex_price"], 2)}' + f' {r["coin"]}\n' + '\n' \
-                   + '‣Продаем на [binance p2p]({r["binance_p2p_href"]}) ' + f'{r["coin"]}' + ' *по курсу' + f' {round(r["binance_p2p_price"], 5)}*' \
+                   + f'‣Продаем на [binance p2p]({r["binance_p2p_href"]}) ' + f'{r["coin"]}' + ' *по курсу' + f' {round(r["binance_p2p_price"], 5)}*' \
                    + f'\nполучаем {round(100_000 / r["garantex_price"] * r["binance_p2p_price"], 2)} рублей ' + r[
                        'bank']
             messages.append(text)

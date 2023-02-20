@@ -96,7 +96,8 @@ def find_paths(bestchange_data_banks,
                     'binance_p2p_price': float(bin_price_sell),
                     'garantex_price': float(gar_price['bids_price']),
                     'coin': coin,
-                    'binance_p2p_href': binance_p2p_data[(b, coin, 'SELL')]['href']
+                    'binance_p2p_href': binance_p2p_data[(b, coin, 'SELL')]['href'],
+                    'garantex_href': gar_price['href']
                 })
             if gar_price['asks_price'] < bin_price_buy:
                 routes_bingar.append({
@@ -105,7 +106,8 @@ def find_paths(bestchange_data_banks,
                     'binance_p2p_price': float(bin_price_buy),
                     'garantex_price': float(gar_price['asks_price']),
                     'coin': coin,
-                    'binance_p2p_href': binance_p2p_data[(b, coin, 'BUY')]['href']
+                    'binance_p2p_href': binance_p2p_data[(b, coin, 'BUY')]['href'],
+                    'garantex_href': gar_price['href']
                 })
     return routes_banks, routes_usdt, routes_bingar
 
