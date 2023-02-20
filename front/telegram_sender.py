@@ -2,7 +2,7 @@
 Файл с функциями отправки сообщений по каналам. Скорее всего в итоге он будет иметь другой вид.
 """
 import aiogram
-from aiogram import Bot, types, Dispatcher, executor
+from aiogram import Bot, Dispatcher
 
 from bestloops_2.pasrsers.bestchange_parser import get_bestchange_data
 from bestloops_2.pasrsers.binance_parser import get_binance_data
