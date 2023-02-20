@@ -34,7 +34,7 @@ def find_paths(bestchange_data_banks,
                 continue
             for bank in ['TinkoffNew', 'RaiffeisenBank', 'RosBankNew']:
                 amount_2 = amount_1 * float(binance_p2p_data[(bank, bcoin, 'BUY')]['price'])
-                if amount_2 > 100_000:  # TODO поменять на >
+                if amount_2 < 100_000:  # TODO поменять на >
                     routes_banks.append({
                         'exch_name': bch_pair['exchangers'],
                         'bank_init': bch_pair['bank'],
@@ -48,17 +48,30 @@ def find_paths(bestchange_data_banks,
                         'binance_rate_spot': binance_spot_data[(coin, bcoin)]['price'],
                         'binance_rate_p2p': float(binance_p2p_data[(bank, bcoin, 'BUY')]['price'])
                     })
+
     routes_usdt = []
     for bch_pair in bestchange_data_usdt:
         coin = bch_pair['coin']
-        amount_0 = 100_000 / bch_pair['rate']
+        amount_0 = 1_000 / bch_pair['rate']
         for bcoin in binance_coins:
             if bcoin not in ['NGN']:
                 try:
+                    # TODO А что если выгоднее USDT -> COIN_A -> USDT ?
                     amount_1 = amount_0 * binance_spot_data[(coin, bcoin)]['price']
                     amount_2 = amount_1 * binance_spot_data[(bcoin, 'USDT')]['price']
-                    if amount_2 > 100_000:
-                        routes_usdt.append(('usdt', coin, bcoin, 'usdt', amount_2))
+                    if amount_2 > 1_000:
+                        routes_usdt.append({
+                            'exch_name': bch_pair['exchangers'],
+                            'init_coin': 'usdt',
+                            'bch_coin': coin,
+                            'binance_coin': bcoin,
+                            'bch_rate': bch_pair['rate'],
+                            'binance_coin_bcoin_rate': binance_spot_data[(coin, bcoin)]['price'],
+                            'binance_bcoin_usdt_rate': binance_spot_data[(bcoin, 'USDT')]['price'],
+                            'amount_0': amount_0,
+                            'middle_amount': amount_1,
+                            'final_amount': amount_2
+                        })
                 except KeyError:
                     continue
 
@@ -71,9 +84,21 @@ def find_paths(bestchange_data_banks,
             bin_price_buy = binance_p2p_data[(b, coin, 'BUY')]['price']
             gar_price = garantex_data[coin.lower() + 'rub']
             if gar_price['bids_price'] > bin_price_sell:
-                routes_bingar.append((b, bin_price_sell, gar_price['bids_price'], coin, 'some profit'))
+                routes_bingar.append({
+                    'path': 0,  # Binance -> Garantex
+                    'bank': b,
+                    'binance_p2p_price': float(bin_price_sell),
+                    'garantex_price': float(gar_price['bids_price']),
+                    'coin': coin
+                })
             if gar_price['asks_price'] < bin_price_buy:
-                routes_bingar.append((gar_price['asks_price'], b, bin_price_buy, coin, 'some_profit'))
+                routes_bingar.append({
+                    'path': 1,  # Garantex -> Binance
+                    'bank': b,
+                    'binance_p2p_price': float(bin_price_buy),
+                    'garantex_price': float(gar_price['asks_price']),
+                    'coin': coin
+                })
     return routes_banks, routes_usdt, routes_bingar
 
 
