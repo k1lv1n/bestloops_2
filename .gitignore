@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # Secret file
-/front/config.py
+/front/configs.py
