@@ -94,13 +94,6 @@ async def send_to_test(data_to_be_sent):
             continue
 
 
-def form_link(coin_send, coin_get):
-    # TODO сделать нормальные ссылки, тут не работет так)
-    if coin_send == "sber":
-        coin_send = 'sberbank'
-    return "https://www.bestchange.ru/{}-to-{}.html".format(coin_send, coin_get)
-
-
 def form_text_bingar(routes):
     max_messages_bin_gar = 5
     max_messages_gar_bin = 5
@@ -146,14 +139,13 @@ def form_text_usdt(routes):
         profit = round(100 * (r["final_amount"] / 1_000 - 1), 2)
         text = 'USDT' + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + 'USDT' \
                + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
-               + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '1 000 USDT ' + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(1_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
-               + '‣Продаем на binance spot ' + f'{r["bch_coin"]}' + ' *по курсу' + f' {round(r["binance_coin_bcoin_rate"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
-               + f'\n\n‣Продаем {r["binance_coin"]}' + f' на binance *по курсу {r["binance_bcoin_usdt_rate"]}*' \
+               + f'‣Обмениваем на [bestchange]({r["href"]}): 1 000 USDT \n' + f'*по курсу {r["bch_rate"]}*\n' + 'получаем на binance: ' + f'{round(1_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
+               + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href_coin_to_b"]}) \n*по курсу' + f' {round(r["binance_coin_bcoin_rate"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
+               + f'\n\n‣Продаем {r["binance_coin"]}' + f' на [binance spot]({r["binance_href_b_to_usdt"]}) \n*по курсу {r["binance_bcoin_usdt_rate"]}*' \
                + f'\nполучаем USDT {round(r["final_amount"], 2)}'
         messages.append(text)
         max_messages -= 1
         if max_messages == 0:
-            # messages.append('-------------------------------------------------------')
             break
     return messages
 
@@ -170,14 +162,13 @@ def from_text_tink_less_then_one(routes):
             text = r["bank_init"] + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + r['end_bank'] \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
                    + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '100 000 рублей ' + r[
-                       'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
-                   + '‣Продаем на binance spot ' + f'{r["bch_coin"]}' + ' *по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
-                   + f'\n\n‣Продаем {r["binance_coin"]}' + f' на binance p2p *по курсу {r["binance_rate_p2p"]}*' \
+                       'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
+                   + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href"]}) ' + '\n*по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
+                   + f'\n\n‣Продаем {r["binance_coin"]}' + f' на binance p2p \n*по курсу {r["binance_rate_p2p"]}*' \
                    + f'\nполучаем на {r["end_bank"]} {round(r["final_amount"], 2)}'
             messages.append(text)
             max_messages -= 1
         if max_messages == 0:
-            # messages.append('-------------------------------------------------------')
             break
     return messages
 
@@ -194,14 +185,13 @@ def form_text_sber_less_then_one(routes):
             text = r["bank_init"] + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + r['end_bank'] \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
                    + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '100 000 рублей ' + r[
-                       'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
-                   + '‣Продаем на binance spot ' + f'{r["bch_coin"]}' + ' *по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
-                   + f'\n\n‣Продаем {r["binance_coin"]}' + f' на binance p2p *по курсу {r["binance_rate_p2p"]}*' \
+                       'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
+                   + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href"]}) {r["bch_coin"]} \n*по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
+                   + f'\n\n‣Продаем {r["binance_coin"]} на binance p2p \n*по курсу {r["binance_rate_p2p"]}*' \
                    + f'\nполучаем на {r["end_bank"]} {round(r["final_amount"], 2)}'
             messages.append(text)
             max_messages -= 1
         if max_messages == 0:
-            # messages.append('-------------------------------------------------------')
             break
     return messages
 
@@ -219,13 +209,12 @@ def form_text_vip(routes):
                    + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
                    + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '100 000 рублей ' + r[
                        'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
-                   + '‣Продаем на binance spot ' + f'{r["bch_coin"]}' + ' *по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
-                   + f'\n\n‣Продаем {r["binance_coin"]}' + f' на binance p2p *по курсу {r["binance_rate_p2p"]}*' \
+                   + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href"]}) {r["bch_coin"]} \n*по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
+                   + f'\n\n‣Продаем {r["binance_coin"]} на binance p2p \n*по курсу {r["binance_rate_p2p"]}*' \
                    + f'\nполучаем на {r["end_bank"]} {round(r["final_amount"], 2)}'
             messages.append(text)
             max_messages -= 1
         if max_messages == 0:
-            # messages.append('-------------------------------------------------------')
             break
     return messages
 

@@ -47,7 +47,8 @@ def find_paths(bestchange_data_banks,
                         'bch_rate': bch_pair['rate'],
                         'binance_rate_spot': binance_spot_data[(coin, bcoin)]['price'],
                         'binance_rate_p2p': float(binance_p2p_data[(bank, bcoin, 'BUY')]['price']),
-                        'href': bch_pair['href']
+                        'href': bch_pair['href'],
+                        'binance_href': binance_spot_data[(coin, bcoin)]['href']
                     })
 
     routes_usdt = []
@@ -72,7 +73,9 @@ def find_paths(bestchange_data_banks,
                             'amount_0': amount_0,
                             'middle_amount': amount_1,
                             'final_amount': amount_2,
-                            'href': bch_pair['href']
+                            'href': bch_pair['href'],
+                            'binance_href_coin_to_b': binance_spot_data[(coin, bcoin)]['href'],
+                            'binance_href_b_to_usdt': binance_spot_data[(bcoin, 'USDT')]['href']
                         })
                 except KeyError:
                     continue

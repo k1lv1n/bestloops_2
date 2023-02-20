@@ -102,10 +102,12 @@ def get_binance_data():
                 token_a, token_b = split_symbol(symbol)
                 spot_data[(token_a, token_b)] = {"from_token": token_a,
                                                  "to_token": token_b,
-                                                 "price": float(ob['bidPrice'])}
+                                                 "price": float(ob['bidPrice']),
+                                                 "href": f'https://www.binance.com/ru/trade/{token_a}_{token_b}?type=spot'}
                 spot_data[(token_b, token_a)] = {"from_token": token_a,
                                                  "to_token": token_b,
-                                                 "price": 1 / float(ob['askPrice'])}
+                                                 "price": 1 / float(ob['askPrice']),
+                                                 "href": f'https://www.binance.com/ru/trade/{token_a}_{token_b}?type=spot'}
         client.close_connection()
         return spot_data, all_coins_names_set
 
