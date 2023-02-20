@@ -18,6 +18,11 @@ dp = Dispatcher(bot)
 
 
 async def send_to_sber_less_then_one(data_to_be_sent):
+    try:
+        await bot.send_message(chat_id=SBER_LESS_THAN_ONE_CHANNEL_ID,
+                               text='_________________________________________________________')
+    except aiogram.exceptions.RetryAfter:
+        pass
     for message in data_to_be_sent:
         try:
             await bot.send_message(chat_id=SBER_LESS_THAN_ONE_CHANNEL_ID, text=message, parse_mode='Markdown')
@@ -26,6 +31,11 @@ async def send_to_sber_less_then_one(data_to_be_sent):
 
 
 async def send_to_tink_less_then_one(data_to_be_sent):
+    try:
+        await bot.send_message(chat_id=TINK_LESS_THAN_ONE_CHANNEL_ID,
+                               text='_________________________________________________________')
+    except aiogram.exceptions.RetryAfter:
+        pass
     for message in data_to_be_sent:
         try:
             await bot.send_message(chat_id=TINK_LESS_THAN_ONE_CHANNEL_ID, text=message, parse_mode='Markdown')
@@ -34,6 +44,10 @@ async def send_to_tink_less_then_one(data_to_be_sent):
 
 
 async def send_to_vip(data_to_be_sent):
+    try:
+        await bot.send_message(chat_id=VIP_CHANNEL_ID, text='_________________________________________________________')
+    except aiogram.exceptions.RetryAfter:
+        pass
     for message in data_to_be_sent:
         try:
             await bot.send_message(chat_id=VIP_CHANNEL_ID, text=message, parse_mode='Markdown')
@@ -42,6 +56,11 @@ async def send_to_vip(data_to_be_sent):
 
 
 async def send_to_binance_garantex(data_to_be_sent):
+    try:
+        await bot.send_message(chat_id=BINANCE_GARANTEX_CHANNEL_ID,
+                               text='_________________________________________________________')
+    except aiogram.exceptions.RetryAfter:
+        pass
     for message in data_to_be_sent:
         try:
             await bot.send_message(chat_id=BINANCE_GARANTEX_CHANNEL_ID, text=message, parse_mode='Markdown')
@@ -50,6 +69,11 @@ async def send_to_binance_garantex(data_to_be_sent):
 
 
 async def send_to_no_bank(data_to_be_sent):
+    try:
+        await bot.send_message(chat_id=NO_BANK_CHANNEL_ID,
+                               text='_________________________________________________________')
+    except aiogram.exceptions.RetryAfter:
+        pass
     for message in data_to_be_sent:
         try:
             await bot.send_message(chat_id=NO_BANK_CHANNEL_ID, text=message, parse_mode='Markdown')
@@ -58,7 +82,12 @@ async def send_to_no_bank(data_to_be_sent):
 
 
 async def send_to_test(data_to_be_sent):
-    for message in data_to_be_sent[0:10]:
+    try:
+        await bot.send_message(chat_id=TEST_CHANNEL_ID,
+                               text='_________________________________________________________')
+    except aiogram.exceptions.RetryAfter:
+        pass
+    for message in data_to_be_sent:
         try:
             await bot.send_message(chat_id=TEST_CHANNEL_ID, text=message, parse_mode='Markdown')
         except aiogram.exceptions.RetryAfter:
