@@ -78,8 +78,10 @@ def get_binance_data():
                 rs = parse_binance_p2p('SELL', ass, b)
                 if len(rb) != 0 and len(rs) != 0:
                     # TODO проверка контр агентов(рейтинг, кол-во сделок, мб разница в цене между соседними челами), если чел скамит (выставляет цену ниже рынка) -> берем не rb[0] а следующий
-                    p2p_prices[(b, ass, 'BUY')] = {'price': rb[0]['price'], 'asset': ass, 'bank': b, 'action': 'BUY'}
-                    p2p_prices[(b, ass, 'SELL')] = {'price': rs[0]['price'], 'asset': ass, 'bank': b, 'action': 'SELL'}
+                    p2p_prices[(b, ass, 'BUY')] = {'price': rb[0]['price'], 'asset': ass, 'bank': b, 'action': 'BUY',
+                                                   'href': f'https://p2p.binance.com/ru/trade/{b}/{ass}?fiat=RUB'}
+                    p2p_prices[(b, ass, 'SELL')] = {'price': rs[0]['price'], 'asset': ass, 'bank': b, 'action': 'SELL',
+                                                    'href': f'https://p2p.binance.com/ru/trade/sell/{ass}?fiat=RUB&payment={b}'}
         return p2p_prices
 
     def get_spot_data():
@@ -115,4 +117,4 @@ def get_binance_data():
 
 
 if __name__ == '__main__':
-    pprint(get_binance_data()[0][('VAI', 'BUSD')])
+    pprint(get_binance_data())
