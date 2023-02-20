@@ -1,13 +1,15 @@
 """
 Файл с парсингом данных с Binance
 """
-from pasrsers.api_keys import BINANCE_SECRET, BINANCE_PUBLIC
+
 from pprint import pprint
 
 import fake_useragent
 import requests
 
 from binance.client import Client
+
+from bestloops_2.pasrsers.api_keys import BINANCE_SECRET, BINANCE_PUBLIC
 
 
 def get_binance_data():
@@ -75,8 +77,11 @@ def get_binance_data():
                 rb = parse_binance_p2p('BUY', ass, b)
                 rs = parse_binance_p2p('SELL', ass, b)
                 if len(rb) != 0 and len(rs) != 0:
-                    p2p_prices[(b, ass, 'BUY')] = {'price': rb[0]['price'], 'asset': ass, 'bank': b, 'action': 'BUY'}
-                    p2p_prices[(b, ass, 'SELL')] = {'price': rs[0]['price'], 'asset': ass, 'bank': b, 'action': 'SELL'}
+                    # TODO проверка контр агентов(рейтинг, кол-во сделок, мб разница в цене между соседними челами), если чел скамит (выставляет цену ниже рынка) -> берем не rb[0] а следующий
+                    p2p_prices[(b, ass, 'BUY')] = {'price': rb[0]['price'], 'asset': ass, 'bank': b, 'action': 'BUY',
+                                                   'href': f'https://p2p.binance.com/ru/trade/{b}/{ass}?fiat=RUB'}
+                    p2p_prices[(b, ass, 'SELL')] = {'price': rs[0]['price'], 'asset': ass, 'bank': b, 'action': 'SELL',
+                                                    'href': f'https://p2p.binance.com/ru/trade/sell/{ass}?fiat=RUB&payment={b}'}
         return p2p_prices
 
     def get_spot_data():
@@ -89,6 +94,7 @@ def get_binance_data():
             return None, None
 
         spot_data = {}
+        client = Client(BINANCE_PUBLIC, BINANCE_SECRET)
         all_coins_names_set = set(map(lambda x: x['coin'], client.get_all_coins_info()))  # вынести в инициализацию
         # symbols = list(map(lambda x: x['symbol'], client.get_all_tickers()))
         orderbooks = client.get_orderbook_tickers()
@@ -98,16 +104,17 @@ def get_binance_data():
                 token_a, token_b = split_symbol(symbol)
                 spot_data[(token_a, token_b)] = {"from_token": token_a,
                                                  "to_token": token_b,
-                                                 "price": float(ob['bidPrice'])}
+                                                 "price": float(ob['bidPrice']),
+                                                 "href": f'https://www.binance.com/ru/trade/{token_a}_{token_b}?type=spot'}
                 spot_data[(token_b, token_a)] = {"from_token": token_a,
                                                  "to_token": token_b,
-                                                 "price": 1 / float(ob['askPrice'])}
+                                                 "price": 1 / float(ob['askPrice']),
+                                                 "href": f'https://www.binance.com/ru/trade/{token_a}_{token_b}?type=spot'}
+        client.close_connection()
         return spot_data, all_coins_names_set
 
-    client = Client(BINANCE_PUBLIC, BINANCE_SECRET)
-    client.close_connection()
     return get_spot_data(), pasrse_all_p2p(),
 
 
 if __name__ == '__main__':
-    pprint(get_binance_data()[0][('VAI', 'BUSD')])
+    pprint(get_binance_data())
