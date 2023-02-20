@@ -116,7 +116,7 @@ def form_text_bingar(routes):
             url = 'www.google.com'
             text = r['bank'] + ' -> ' + r['coin'] + ' -> ' + 'Garantex' \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' \
-                   + f'‣Покупаем на [binance p2p]({url}\): ' + f'за 100 000 рублей {r["coin"]}' + '\n' + f'*по курсу {r["binance_p2p_price"]}*\n' \
+                   + f'‣Покупаем на [binance p2p]({url}): ' + f'за 100 000 рублей {r["coin"]}' + '\n' + f'*по курсу {r["binance_p2p_price"]}*\n' \
                    + 'Получаем на binance: ' + f'{round(100_000 / r["binance_p2p_price"], 2)}' + f' {r["coin"]}\n' + '\n' \
                    + '‣Продаем на Garantex ' + f'{r["coin"]}' + ' *по курсу' + f' {round(r["garantex_price"], 5)}*' \
                    + f'\nполучаем {round(100_000 / r["binance_p2p_price"] * r["garantex_price"], 2)} рублей'
@@ -128,7 +128,7 @@ def form_text_bingar(routes):
             url = 'www.google.com'
             text = 'Garantex RUB' + ' -> ' + r['coin'] + ' -> ' + r['bank'] \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' \
-                   + f'‣Покупаем на [garantex spot]({url}\): ' + f'за 100 000 рублей {r["coin"]}' + '\n' + f'*по курсу {r["garantex_price"]}*\n' \
+                   + f'‣Покупаем на [garantex spot]({url}): ' + f'за 100 000 рублей {r["coin"]}' + '\n' + f'*по курсу {r["garantex_price"]}*\n' \
                    + 'Получаем на Garantex: ' + f'{round(100_000 / r["garantex_price"], 2)}' + f' {r["coin"]}\n' + '\n' \
                    + '‣Продаем на Binance p2p ' + f'{r["coin"]}' + ' *по курсу' + f' {round(r["binance_p2p_price"], 5)}*' \
                    + f'\nполучаем {round(100_000 / r["garantex_price"] * r["binance_p2p_price"], 2)} рублей ' + r[
@@ -144,10 +144,9 @@ def form_text_usdt(routes):
     sorted_routs = sorted(routes, key=lambda x: x['final_amount'] / 1_000, reverse=True)
     for r in sorted_routs:
         profit = round(100 * (r["final_amount"] / 1_000 - 1), 2)
-        url = form_link('USDT', r['bch_coin'])
         text = 'USDT' + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + 'USDT' \
                + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
-               + f'‣Обмениваем на [bestchange]({url}\): ' + '1 000 USDT ' + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(1_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
+               + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '1 000 USDT ' + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(1_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
                + '‣Продаем на binance spot ' + f'{r["bch_coin"]}' + ' *по курсу' + f' {round(r["binance_coin_bcoin_rate"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
                + f'\n\n‣Продаем {r["binance_coin"]}' + f' на binance *по курсу {r["binance_bcoin_usdt_rate"]}*' \
                + f'\nполучаем USDT {round(r["final_amount"], 2)}'
@@ -168,10 +167,9 @@ def from_text_tink_less_then_one(routes):
         if profit >= 1 or r["bank_init"] != 'tinkoff':
             continue
         else:
-            url = form_link(r["bank_init"], r['bch_coin'])
             text = r["bank_init"] + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + r['end_bank'] \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
-                   + f'‣Обмениваем на [bestchange]({url}\): ' + '100 000 рублей ' + r[
+                   + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '100 000 рублей ' + r[
                        'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
                    + '‣Продаем на binance spot ' + f'{r["bch_coin"]}' + ' *по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
                    + f'\n\n‣Продаем {r["binance_coin"]}' + f' на binance p2p *по курсу {r["binance_rate_p2p"]}*' \
@@ -193,10 +191,9 @@ def form_text_sber_less_then_one(routes):
         if profit >= 1 or r["bank_init"] != 'sber':
             continue
         else:
-            url = form_link(r["bank_init"], r['bch_coin'])
             text = r["bank_init"] + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + r['end_bank'] \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
-                   + f'‣Обмениваем на [bestchange]({url}\): ' + '100 000 рублей ' + r[
+                   + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '100 000 рублей ' + r[
                        'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
                    + '‣Продаем на binance spot ' + f'{r["bch_coin"]}' + ' *по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
                    + f'\n\n‣Продаем {r["binance_coin"]}' + f' на binance p2p *по курсу {r["binance_rate_p2p"]}*' \
@@ -218,10 +215,9 @@ def form_text_vip(routes):
         if profit > 1:  # TODO поменять на < 1
             continue
         else:
-            url = form_link(r["bank_init"], r['bch_coin'])
             text = r["bank_init"] + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + r['end_bank'] \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
-                   + f'‣Обмениваем на [bestchange]({url}\): ' + '100 000 рублей ' + r[
+                   + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '100 000 рублей ' + r[
                        'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
                    + '‣Продаем на binance spot ' + f'{r["bch_coin"]}' + ' *по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
                    + f'\n\n‣Продаем {r["binance_coin"]}' + f' на binance p2p *по курсу {r["binance_rate_p2p"]}*' \
