@@ -18,9 +18,11 @@ dp = Dispatcher(bot)
 
 
 async def send_to_sber_less_then_one(data_to_be_sent):
+    if len(data_to_be_sent) == 0:
+        return None
     try:
         await bot.send_message(chat_id=SBER_LESS_THAN_ONE_CHANNEL_ID,
-                               text='_________________________________________________________')
+                               text='________________________________________')
     except aiogram.exceptions.RetryAfter:
         pass
     for message in data_to_be_sent:
@@ -31,9 +33,11 @@ async def send_to_sber_less_then_one(data_to_be_sent):
 
 
 async def send_to_tink_less_then_one(data_to_be_sent):
+    if len(data_to_be_sent) == 0:
+        return None
     try:
         await bot.send_message(chat_id=TINK_LESS_THAN_ONE_CHANNEL_ID,
-                               text='_________________________________________________________')
+                               text='________________________________________')
     except aiogram.exceptions.RetryAfter:
         pass
     for message in data_to_be_sent:
@@ -44,8 +48,10 @@ async def send_to_tink_less_then_one(data_to_be_sent):
 
 
 async def send_to_vip(data_to_be_sent):
+    if len(data_to_be_sent) == 0:
+        return None
     try:
-        await bot.send_message(chat_id=VIP_CHANNEL_ID, text='_________________________________________________________')
+        await bot.send_message(chat_id=VIP_CHANNEL_ID, text='________________________________________')
     except aiogram.exceptions.RetryAfter:
         pass
     for message in data_to_be_sent:
@@ -56,9 +62,11 @@ async def send_to_vip(data_to_be_sent):
 
 
 async def send_to_binance_garantex(data_to_be_sent):
+    if len(data_to_be_sent) == 0:
+        return None
     try:
         await bot.send_message(chat_id=BINANCE_GARANTEX_CHANNEL_ID,
-                               text='_________________________________________________________')
+                               text='________________________________________')
     except aiogram.exceptions.RetryAfter:
         pass
     for message in data_to_be_sent:
@@ -69,9 +77,11 @@ async def send_to_binance_garantex(data_to_be_sent):
 
 
 async def send_to_no_bank(data_to_be_sent):
+    if len(data_to_be_sent) == 0:
+        return None
     try:
         await bot.send_message(chat_id=NO_BANK_CHANNEL_ID,
-                               text='_________________________________________________________')
+                               text='________________________________________')
     except aiogram.exceptions.RetryAfter:
         pass
     for message in data_to_be_sent:
@@ -82,9 +92,11 @@ async def send_to_no_bank(data_to_be_sent):
 
 
 async def send_to_test(data_to_be_sent):
+    if len(data_to_be_sent) == 0:
+        return None
     try:
         await bot.send_message(chat_id=TEST_CHANNEL_ID,
-                               text='_________________________________________________________')
+                               text='________________________________________')
     except aiogram.exceptions.RetryAfter:
         pass
     for message in data_to_be_sent:
@@ -137,10 +149,10 @@ def form_text_usdt(routes):
         profit = round(100 * (r["final_amount"] / 1_000 - 1), 2)
         text = 'USDT' + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + 'USDT' \
                + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
-               + f'‣Обмениваем на [bestchange]({r["href"]}): 1 000 USDT \n' + f'*по курсу {r["bch_rate"]}*\n' + 'получаем на binance: ' + f'{round(1_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
-               + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href_coin_to_b"]}) \n*по курсу' + f' {round(r["binance_coin_bcoin_rate"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
+               + f'‣Обмениваем на [bestchange]({r["href"]}): 1 000 USDT \n' + f'*по курсу {r["bch_rate"]}*\n' + 'получаем на binance: ' + f'{round(1_000 / r["bch_rate"], 3)}' + f' {r["bch_coin"]}\n' + '\n' \
+               + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href_coin_to_b"]}) \n*по курсу' + f' {round(r["binance_coin_bcoin_rate"], 6)}*' + f'\nполучаем {round(r["middle_amount"], 3)} {r["binance_coin"]}' \
                + f'\n\n‣Продаем {r["binance_coin"]}' + f' на [binance spot]({r["binance_href_b_to_usdt"]}) \n*по курсу {r["binance_bcoin_usdt_rate"]}*' \
-               + f'\nполучаем USDT {round(r["final_amount"], 2)}'
+               + f'\nполучаем USDT {round(r["final_amount"], 3)}'
         messages.append(text)
         max_messages -= 1
         if max_messages == 0:
@@ -154,16 +166,16 @@ def from_text_tink_less_then_one(routes):
     sorted_routs = sorted(routes, key=lambda x: x['final_amount'] / 100_000, reverse=True)
     for r in sorted_routs:
         profit = round(100 * (r["final_amount"] / 100_000 - 1), 2)
-        if profit >= 1 or r["bank_init"] != 'tinkoff':
+        if profit >= 1 or r["bank_init"] != 'Тинькофф':
             continue
         else:
             text = r["bank_init"] + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + r['end_bank'] \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
                    + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '100 000 рублей ' + r[
-                       'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
-                   + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href"]}) ' + '\n*по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
+                       'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 3)}' + f' {r["bch_coin"]}\n' + '\n' \
+                   + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href"]}) ' + '\n*по курсу' + f' {round(r["binance_rate_spot"], 6)}*' + f'\nполучаем {round(r["middle_amount"], 3)} {r["binance_coin"]}' \
                    + f'\n\n‣Продаем {r["binance_coin"]}' + f' на [binance p2p]({r["binance_p2p_href"]}) \n*по курсу {r["binance_rate_p2p"]}*' \
-                   + f'\nполучаем на {r["end_bank"]} {round(r["final_amount"], 2)}'
+                   + f'\nполучаем на {r["end_bank"]} {round(r["final_amount"], 3)}'
             messages.append(text)
             max_messages -= 1
         if max_messages == 0:
@@ -177,16 +189,16 @@ def form_text_sber_less_then_one(routes):
     sorted_routs = sorted(routes, key=lambda x: x['final_amount'] / 100_000, reverse=True)
     for r in sorted_routs:
         profit = round(100 * (r["final_amount"] / 100_000 - 1), 2)
-        if profit >= 1 or r["bank_init"] != 'sber':
+        if profit >= 1 or r["bank_init"] != 'Сбербанк':
             continue
         else:
             text = r["bank_init"] + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + r['end_bank'] \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
                    + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '100 000 рублей ' + r[
-                       'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
-                   + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href"]}) {r["bch_coin"]} \n*по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
+                       'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 3)}' + f' {r["bch_coin"]}\n' + '\n' \
+                   + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href"]}) \n*по курсу' + f' {round(r["binance_rate_spot"], 6)}*' + f'\nполучаем {round(r["middle_amount"], 3)} {r["binance_coin"]}' \
                    + f'\n\n‣Продаем {r["binance_coin"]} на [binance p2p]({r["binance_p2p_href"]}) \n*по курсу {r["binance_rate_p2p"]}*' \
-                   + f'\nполучаем на {r["end_bank"]} {round(r["final_amount"], 2)}'
+                   + f'\nполучаем на {r["end_bank"]} {round(r["final_amount"], 3)}'
             messages.append(text)
             max_messages -= 1
         if max_messages == 0:
@@ -206,10 +218,10 @@ def form_text_vip(routes):
             text = r["bank_init"] + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + r['end_bank'] \
                    + '\n' + f'profit: *{profit} %*' + '\n\n' + f'Обменник: {r["exch_name"]}' + '\n\n' \
                    + f'‣Обмениваем на [bestchange]({r["href"]}): ' + '100 000 рублей ' + r[
-                       'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 2)}' + f' {r["bch_coin"]}\n' + '\n' \
-                   + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href"]}) {r["bch_coin"]} \n*по курсу' + f' {round(r["binance_rate_spot"], 5)}*' + f'\nполучаем {round(r["middle_amount"], 2)} {r["binance_coin"]}' \
+                       'bank_init'] + '\n' + f'*по курсу {r["bch_rate"]}*\n' + 'Получаем на binance: ' + f'{round(100_000 / r["bch_rate"], 3)}' + f' {r["bch_coin"]}\n' + '\n' \
+                   + f'‣Продаем {r["bch_coin"]} на [binance spot]({r["binance_href"]}) \n*по курсу' + f' {round(r["binance_rate_spot"], 6)}*' + f'\nполучаем {round(r["middle_amount"], 3)} {r["binance_coin"]}' \
                    + f'\n\n‣Продаем {r["binance_coin"]} на [binance p2p]({r["binance_p2p_href"]}) \n*по курсу {r["binance_rate_p2p"]}*' \
-                   + f'\nполучаем на {r["end_bank"]} {round(r["final_amount"], 2)}'
+                   + f'\nполучаем на {r["end_bank"]} {round(r["final_amount"], 3)}'
             messages.append(text)
             max_messages -= 1
         if max_messages == 0:
