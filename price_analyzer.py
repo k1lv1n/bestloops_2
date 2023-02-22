@@ -35,12 +35,14 @@ def find_paths(bestchange_data_banks,
             for bank in ['TinkoffNew', 'RaiffeisenBank', 'RosBankNew']:
                 amount_2 = amount_1 * float(binance_p2p_data[(bank, bcoin, 'BUY')]['price'])
                 if amount_2 < 100_000:  # TODO поменять на >
+                    bank_init = 'Сбербанк' if bch_pair['bank'] == 'sber' else \
+                                'Тинькофф' if bch_pair['bank'] == 'tinkoff' else bch_pair['bank']
                     routes_banks.append({
                         'exch_name': bch_pair['exchangers'],
-                        'bank_init': bch_pair['bank'],
+                        'bank_init': bank_init,
                         'bch_coin': coin,
                         'binance_coin': bcoin,
-                        'end_bank': bank,
+                        'end_bank': bank.replace('New', ''),
                         'middle_amount': amount_1,
                         'final_amount': amount_2,
                         'init_amount': amount_0,
@@ -65,7 +67,7 @@ def find_paths(bestchange_data_banks,
                     if amount_2 > 1_000:
                         routes_usdt.append({
                             'exch_name': bch_pair['exchangers'],
-                            'init_coin': 'usdt',
+                            'init_coin': 'USDT',
                             'bch_coin': coin,
                             'binance_coin': bcoin,
                             'bch_rate': bch_pair['rate'],
@@ -92,7 +94,7 @@ def find_paths(bestchange_data_banks,
             if gar_price['bids_price'] > bin_price_sell:
                 routes_bingar.append({
                     'path': 0,  # Binance -> Garantex
-                    'bank': b,
+                    'bank': b.replace('New', ''),
                     'binance_p2p_price': float(bin_price_sell),
                     'garantex_price': float(gar_price['bids_price']),
                     'coin': coin,
@@ -102,7 +104,7 @@ def find_paths(bestchange_data_banks,
             if gar_price['asks_price'] < bin_price_buy:
                 routes_bingar.append({
                     'path': 1,  # Garantex -> Binance
-                    'bank': b,
+                    'bank': b.replace('New', ''),
                     'binance_p2p_price': float(bin_price_buy),
                     'garantex_price': float(gar_price['asks_price']),
                     'coin': coin,

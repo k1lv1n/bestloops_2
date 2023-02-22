@@ -86,28 +86,41 @@ def get_bestchange_data():
     for bank_id in [sber, tink, raif, qiwi]:
         for cr_id in CRYPTO_IDS:
             res = api.rates().filter(bank_id, cr_id)
-            bch_prices_banks.append(
-                {'bank': banks[bank_id], 'coin': decode_BCH_ticker(currencies[cr_id]['name']), 'rate': res[0]['rate'],
-                 'exchangers': exchangers[res[0]['exchange_id']]['name'],
-                 'href': f'https://www.bestchange.ru/index.php?from={bank_id}&to={cr_id}'
-                 })
+            try:
+                bch_prices_banks.append(
+                    {'bank': banks[bank_id], 'coin': decode_BCH_ticker(currencies[cr_id]['name']),
+                     'rate': res[0]['rate'],
+                     'exchangers': exchangers[res[0]['exchange_id']]['name'],
+                     'href': f'https://www.bestchange.ru/index.php?from={bank_id}&to={cr_id}'
+                     })
+            except IndexError:
+                continue
         res = api.rates().filter(bank_id, bitcoin_bep20_id)
-        bch_prices_banks.append({'bank': banks[bank_id], 'coin': 'BTC', 'rate': res[0]['rate'],
-                                 'exchangers': exchangers[res[0]['exchange_id']]['name'],
-                                 'href': f'https://www.bestchange.ru/index.php?from={bank_id}&to={93}'})
+        try:
+            bch_prices_banks.append({'bank': banks[bank_id], 'coin': 'BTC', 'rate': res[0]['rate'],
+                                     'exchangers': exchangers[res[0]['exchange_id']]['name'],
+                                     'href': f'https://www.bestchange.ru/index.php?from={bank_id}&to={93}'})
+        except IndexError:
+            continue
     bch_prices_usdt = []
     for bank_id in [usdt]:
         CRYPTO_IDS.pop(10)
         for cr_id in CRYPTO_IDS:
             res = api.rates().filter(bank_id, cr_id)
-            bch_prices_usdt.append(
-                {'bank': 'usdt', 'coin': decode_BCH_ticker(currencies[cr_id]['name']), 'rate': res[0]['rate'],
-                 'exchangers': exchangers[res[0]['exchange_id']]['name'],
-                 'href': f'https://www.bestchange.ru/index.php?from={bank_id}&to={cr_id}'})
+            try:
+                bch_prices_usdt.append(
+                    {'bank': 'usdt', 'coin': decode_BCH_ticker(currencies[cr_id]['name']), 'rate': res[0]['rate'],
+                     'exchangers': exchangers[res[0]['exchange_id']]['name'],
+                     'href': f'https://www.bestchange.ru/index.php?from={bank_id}&to={cr_id}'})
+            except IndexError:
+                continue
         res = api.rates().filter(bank_id, bitcoin_bep20_id)
-        bch_prices_usdt.append({'bank': 'usdt', 'coin': 'BTC', 'rate': res[0]['rate'],
-                                'exchangers': exchangers[res[0]['exchange_id']]['name'],
-                                'href': f'https://www.bestchange.ru/index.php?from={bank_id}&to={93}'})
+        try:
+            bch_prices_usdt.append({'bank': 'usdt', 'coin': 'BTC', 'rate': res[0]['rate'],
+                                    'exchangers': exchangers[res[0]['exchange_id']]['name'],
+                                    'href': f'https://www.bestchange.ru/index.php?from={bank_id}&to={93}'})
+        except IndexError:
+            continue
 
     return bch_prices_banks, bch_prices_usdt
 
