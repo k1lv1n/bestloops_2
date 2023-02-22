@@ -33,9 +33,8 @@ def find_paths(bestchange_data_banks,
             except KeyError:
                 continue
             for bank in ['TinkoffNew', 'RaiffeisenBank', 'RosBankNew']:
-                amount_2 = amount_1 * float(
-                    binance_p2p_data[(bank, bcoin, 'BUY')]['price'])  # на p2p комса 0 для тейкера
-                if amount_2 < 100_000:  # fixme поменять на >
+                amount_2 = amount_1 * float(binance_p2p_data[(bank, bcoin, 'BUY')]['price']) * (1 - .25 / 100)
+                if amount_2 > 100_000:
                     routes_banks.append({
                         'exch_name': bch_pair['exchangers'],
                         'bank_init': bch_pair['bank'],
@@ -88,25 +87,37 @@ def find_paths(bestchange_data_banks,
     banks = ['TinkoffNew', 'RaiffeisenBank', 'RosBankNew']
     for coin in coins_bingar:
         for b in banks:
-            bin_price_sell = binance_p2p_data[(b, coin, 'SELL')]['price']
-            bin_price_buy = binance_p2p_data[(b, coin, 'BUY')]['price']
+            bin_price_sell = float(binance_p2p_data[(b, coin, 'SELL')]['price'])
+            bin_price_buy = float(binance_p2p_data[(b, coin, 'BUY')]['price'])
             gar_price = garantex_data[coin.lower() + 'rub']
-            if gar_price['bids_price'] * (1 - .25 / 100) > bin_price_sell:  # комса на гаре 0.25%
+
+            amount_bin_gar_init = 100_000 / bin_price_sell * (1 - .25 / 100)  # Покупка по своему объявлению
+            amount_bin_gar_final = amount_bin_gar_init * float(gar_price['bids_price']) * (
+                        1 - .25 / 100)  # продаем в объявление на гаре
+
+            amount_gar_bin_init = 100_000 / float(gar_price['bids_price']) * (1 - .25 / 100)  # закуп в стакане
+            amount_gar_bin_final = amount_gar_bin_init * bin_price_buy * (1 - .25 / 100)   # продажа по своему объявлению
+
+            if amount_bin_gar_final > 100_000:  # комса на гаре и p2p 0.25%
                 routes_bingar.append({
                     'path': 0,  # Binance -> Garantex
                     'bank': b,
-                    'binance_p2p_price': float(bin_price_sell),
+                    'binance_p2p_price': bin_price_sell,
                     'garantex_price': float(gar_price['bids_price']),
+                    'init_amount': amount_bin_gar_init,
+                    'final_amount': amount_bin_gar_final,
                     'coin': coin,
                     'binance_p2p_href': binance_p2p_data[(b, coin, 'SELL')]['href'],
                     'garantex_href': gar_price['href']
                 })
-            if gar_price['asks_price'] / (1 - .25 / 100) < bin_price_buy:  # комса на гаре 0.25%
+            if amount_gar_bin_final > 100_000:
                 routes_bingar.append({
                     'path': 1,  # Garantex -> Binance
                     'bank': b,
-                    'binance_p2p_price': float(bin_price_buy),
+                    'binance_p2p_price': bin_price_buy,
                     'garantex_price': float(gar_price['asks_price']),
+                    'init_amount': amount_gar_bin_init,
+                    'final_amount': amount_gar_bin_final,
                     'coin': coin,
                     'binance_p2p_href': binance_p2p_data[(b, coin, 'BUY')]['href'],
                     'garantex_href': gar_price['href']
