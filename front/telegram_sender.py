@@ -212,7 +212,7 @@ def form_text_vip(routes):
     sorted_routs = sorted(routes, key=lambda x: x['final_amount'] / 100_000, reverse=True)
     for r in sorted_routs:
         profit = round(100 * (r["final_amount"] / 100_000 - 1), 2)
-        if profit > 1:  # TODO поменять на < 1
+        if profit < 1:
             continue
         else:
             text = r["bank_init"] + ' -> ' + r['bch_coin'] + ' -> ' + r['binance_coin'] + ' -> ' + r['end_bank'] \
