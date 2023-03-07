@@ -9,7 +9,7 @@ import time
 import datetime
 import random
 import jwt
-from bestloops_2.pasrsers.api_keys import GARANTEX_SECRET, GARANTEX_UID
+from pasrsers.api_keys import GARANTEX_SECRET, GARANTEX_UID
 
 
 def generate_new_jwt():

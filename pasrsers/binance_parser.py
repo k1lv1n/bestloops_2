@@ -9,7 +9,7 @@ import requests
 
 from binance.client import Client
 
-from bestloops_2.pasrsers.api_keys import BINANCE_SECRET, BINANCE_PUBLIC
+from pasrsers.api_keys import BINANCE_SECRET, BINANCE_PUBLIC
 
 
 def get_binance_data():

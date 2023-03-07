@@ -3,14 +3,17 @@
 """
 import aiogram
 from aiogram import Bot, Dispatcher
-
-from bestloops_2.pasrsers.bestchange_parser import get_bestchange_data
-from bestloops_2.pasrsers.binance_parser import get_binance_data
-from bestloops_2.pasrsers.garantex_parser import get_garantex_data
+import os
+import sys
+#sys.path.append("..")
+sys.path.append("/root/bestloops_2/")
+from pasrsers.bestchange_parser import get_bestchange_data
+from pasrsers.binance_parser import get_binance_data
+from pasrsers.garantex_parser import get_garantex_data
 from configs import BOT_TOKEN, TEST_CHANNEL_ID, SBER_LESS_THAN_ONE_CHANNEL_ID, TINK_LESS_THAN_ONE_CHANNEL_ID, \
     VIP_CHANNEL_ID, NO_BANK_CHANNEL_ID, BINANCE_GARANTEX_CHANNEL_ID
 import asyncio
-from bestloops_2.price_analyzer import find_paths
+from price_analyzer import find_paths
 import time
 
 bot = Bot(token=BOT_TOKEN)
@@ -123,7 +126,7 @@ def form_text_bingar(routes):
                    + f'‣Покупаем на [binance p2p]({r["binance_p2p_href"]}): ' + f'за 100 000 рублей {r["coin"]}' + '\n' + f'*по курсу {r["binance_p2p_price"]}*\n' \
                    + 'Получаем на binance: ' + f'{round(100_000 * (1 - .25 / 100) / r["binance_p2p_price"], 3)}' + f' {r["coin"]}\n' + '\n' \
                    + f'‣Продаем на [Garantex]({r["garantex_href"]}) ' + f'{r["coin"]}' + ' *по курсу' + f' {round(r["garantex_price"], 6)}*' \
-                   + f'\nполучаем {round(100_000 * (1 - .25 / 100) / r["binance_p2p_price"] * r["garantex_price"] * (1 - .25 / 100), 3)} рублей'
+                   + f'\nполучаем {r["final_amount"]} рублей'
             messages.append(text)
             max_messages_bin_gar -= 1
 
@@ -134,7 +137,7 @@ def form_text_bingar(routes):
                    + f'‣Покупаем на [garantex spot]({r["garantex_href"]}): ' + f'за 100 000 рублей {r["coin"]}' + '\n' + f'*по курсу {r["garantex_price"]}*\n' \
                    + 'Получаем на Garantex: ' + f'{round(100_000 * (1 - .25 / 100) / r["garantex_price"], 3)}' + f' {r["coin"]}\n' + '\n' \
                    + f'‣Продаем на [binance p2p]({r["binance_p2p_href"]}) ' + f'{r["coin"]}' + ' *по курсу' + f' {round(r["binance_p2p_price"], 6)}*' \
-                   + f'\nполучаем {round(100_000 * (1 - .25 / 100) / r["garantex_price"] * r["binance_p2p_price"] * (1 - .25 / 100), 3)} рублей ' + r[
+                   + f'\nполучаем {r["final_amount"]} рублей ' + r[
                        'bank']
             messages.append(text)
             max_messages_gar_bin -= 1
@@ -231,27 +234,27 @@ def form_text_vip(routes):
 
 async def start_sending():
     while True:
-        start = time.time()
+#        start = time.time()
         bestchange_data_banks, bestchange_data_usdt = get_bestchange_data()
-        end = time.time() - start
-        print('Bestchange download time: ', end)
+#        end = time.time() - start
+#        print('Bestchange download time: ', end)
 
-        start = time.time()
+#        start = time.time()
         (binance_spot_data, binance_coins), binance_p2p_data = get_binance_data()
-        end = time.time() - start
-        print('Binance download time: ', end)
+#        end = time.time() - start
+#       print('Binance download time: ', end)
 
-        start = time.time()
+#        start = time.time()
         garantex_data = get_garantex_data()
-        end = time.time() - start
-        print('Garantex download time: ', end)
+#        end = time.time() - start
+#        print('Garantex download time: ', end)
 
-        start = time.time()
+#        start = time.time()
         routes_banks, routes_usdt, routes_bingar = find_paths(bestchange_data_banks, bestchange_data_usdt,
                                                               binance_spot_data,
                                                               binance_p2p_data, binance_coins, garantex_data)
-        end = time.time() - start
-        print('Filter time: ', end)
+#        end = time.time() - start
+#        print('Filter time: ', end)
 
         coros = [send_to_vip(form_text_vip(routes_banks)),
                  send_to_sber_less_then_one(form_text_sber_less_then_one(routes_banks)),
@@ -259,12 +262,12 @@ async def start_sending():
                  send_to_no_bank(form_text_usdt(routes_usdt)),
                  send_to_binance_garantex(form_text_bingar(routes_bingar))]
 
-        start = time.time()
+#       start = time.time()
         await asyncio.gather(*coros)
-        end = time.time() - start
-        print('Send time: ', end)
+#        end = time.time() - start
+#       print('Send time: ', end)
         await asyncio.sleep(60)
-        print('___________________')
+#        print('___________________')
 
 
 if __name__ == '__main__':
